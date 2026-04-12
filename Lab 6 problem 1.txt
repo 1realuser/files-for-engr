@@ -1,0 +1,30 @@
+#include <Arduino.h>
+
+int speakerPin = 9;
+
+int C = 261;
+int D = 294;
+int E = 329;
+int G = 392;
+
+void setup() 
+{
+  pinMode(speakerPin, OUTPUT);
+}
+
+void loop() 
+{
+  tone(speakerPin, C, 300);
+  delay(400);
+
+  tone(speakerPin, D, 300);
+  delay(400);
+
+  tone(speakerPin, E, 300);
+  delay(400);
+
+  tone(speakerPin, G, 500);
+  delay(600);
+
+  delay(500);
+}
