@@ -1,0 +1,60 @@
+#include <Arduino.h>
+
+//Use Hardware-Debounced Switch to Control Interrupt
+//Button pins
+const int RED   = 11; //Red LED on pin 11
+const int GREEN = 10; //Green LED on pin 10
+const int BLUE  = 9;  //Blue LED on pin 9
+
+//Volatile variables can change inside interrupts
+volatile int selectedLED = RED;
+
+void changeColor();
+
+void setup()
+{
+  pinMode(RED, OUTPUT);
+  pinMode(GREEN, OUTPUT);
+  pinMode(BLUE, OUTPUT);
+
+  //Listen for interrupt on pin 2
+  //The pin is inverted, so look for the rising edge
+  attachInterrupt(digitalPinToInterrupt(2), changeColor, RISING);
+}
+
+void changeColor()
+{
+  //Turn off current LED before changing
+  analogWrite(selectedLED, 0);
+
+  //Cycle through LED colors
+  if (selectedLED == RED)
+  {
+    selectedLED = GREEN;
+  }
+  else if (selectedLED == GREEN)
+  {
+    selectedLED = BLUE;
+  }
+  else
+  {
+    selectedLED = RED;
+  }
+}
+
+void loop()
+{
+  //Fade LED up
+  for (int i = 0; i < 256; i++)
+  {
+    analogWrite(selectedLED, i);
+    delay(10);
+  }
+
+  //Fade LED down
+  for (int i = 255; i >= 0; i--)
+  {
+    analogWrite(selectedLED, i);
+    delay(10);
+  }
+}

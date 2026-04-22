@@ -1,0 +1,16 @@
+#include <Arduino.h>
+
+const int MOTOR = 9;
+const int POT = A0;
+
+void setup()
+{
+  pinMode(MOTOR, OUTPUT);
+}
+
+void loop()
+{
+  int val = analogRead(POT);          // 0 to 1023
+  int speed = map(val, 0, 1023, 0, 255);
+  analogWrite(MOTOR, speed);
+}   

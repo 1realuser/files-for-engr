@@ -1,0 +1,30 @@
+#include <Arduino.h>
+
+//Simple Motor Speed Control Program
+const int MOTOR = 9;    //Motor on Digital Pin 9
+
+void setup()
+{
+    pinMode(MOTOR, OUTPUT);
+}
+
+void loop()
+{
+    //Ramp up the speed
+    for (int speed = 0; speed <= 255; speed++)
+    {
+        analogWrite(MOTOR, speed);
+        delay(10); //Give motor time to react
+    }
+
+    delay(2000);
+
+    //Ramp down the speed
+    for (int speed = 255; speed >= 0; speed--)
+    {
+        analogWrite(MOTOR, speed);
+        delay(10); //Give motor time to react
+    }
+
+    delay(2000);
+}
