@@ -1,0 +1,89 @@
+#include <Arduino.h>
+#include <TimerOne.h>
+
+// Pins
+const int BUTTON_PIN = 2;   // Button on pin 2 (interrupt pin)
+const int SPEAKER = 12;     // Speaker on pin 12
+
+// Note frequencies (octave 2)
+#define NOTE_C 65
+#define NOTE_D 73
+#define NOTE_E 82
+#define NOTE_F 87
+#define NOTE_G 98
+#define NOTE_A 110
+#define NOTE_B 123
+
+// Variables modified by interrupts
+volatile int key = NOTE_C;
+volatile int octave_multiplier = 1;
+
+// Function prototypes
+void changeKey();
+void changePitch();
+
+void setup()
+{
+    Serial.begin(9600);
+
+    pinMode(SPEAKER, OUTPUT);
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
+
+    // Hardware interrupt for button press
+    attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), changeKey, FALLING);
+
+    // Timer interrupt every 0.5 seconds
+    Timer1.initialize(500000);
+    Timer1.attachInterrupt(changePitch);
+
+    // Start first tone immediately
+    tone(SPEAKER, key * octave_multiplier);
+}
+
+void loop()
+{
+    Serial.print("Key: ");
+    Serial.print(key);
+
+    Serial.print("  Multiplier: ");
+    Serial.print(octave_multiplier);
+
+    Serial.print("  Frequency: ");
+    Serial.println(key * octave_multiplier);
+
+    delay(100);
+}
+
+// Runs whenever the button is pressed
+void changeKey()
+{
+    octave_multiplier = 1;
+
+    if (key == NOTE_C)
+        key = NOTE_D;
+    else if (key == NOTE_D)
+        key = NOTE_E;
+    else if (key == NOTE_E)
+        key = NOTE_F;
+    else if (key == NOTE_F)
+        key = NOTE_G;
+    else if (key == NOTE_G)
+        key = NOTE_A;
+    else if (key == NOTE_A)
+        key = NOTE_B;
+    else
+        key = NOTE_C;
+
+    tone(SPEAKER, key * octave_multiplier);
+}
+
+// Runs every 0.5 seconds from Timer1
+void changePitch()
+{
+    octave_multiplier *= 2;
+
+    if (octave_multiplier > 16)
+        octave_multiplier = 1;
+
+    tone(SPEAKER, key * octave_multiplier);
+}
