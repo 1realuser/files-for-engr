@@ -1,0 +1,25 @@
+#include <Arduino.h>
+
+// Arduino pin numbers
+const int SW_pin = 2;   // D2 → SW (button)
+const int X_pin = A0;   // A0 → VRX
+const int Y_pin = A1;   // A1 → VRY
+
+void setup() {
+  pinMode(SW_pin, INPUT_PULLUP);  // use internal pull-up (cleaner)
+  Serial.begin(9600);
+}
+
+void loop() {
+  Serial.print("Switch: ");
+  Serial.println(digitalRead(SW_pin)); // 0 = pressed, 1 = not pressed
+
+  Serial.print("X-axis: ");
+  Serial.println(analogRead(X_pin));
+
+  Serial.print("Y-axis: ");
+  Serial.println(analogRead(Y_pin));
+
+  Serial.println();
+  delay(500);
+}

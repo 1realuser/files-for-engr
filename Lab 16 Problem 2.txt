@@ -1,0 +1,72 @@
+#include <Arduino.h>
+
+// ===== Joystick =====
+const int Y_pin = A1;   // forward/back control
+
+// ===== H-Bridge (L298N) =====
+const int enA = 3;  // right motor speed (PWM)
+const int in1 = 4;
+const int in2 = 5;
+
+const int enB = 6;  // left motor speed (PWM)
+const int in3 = 8;
+const int in4 = 7;
+
+// ===== Settings =====
+int deadzone = 100;   // prevents jitter near center (~512)
+
+void setup() {
+  pinMode(enA, OUTPUT);
+  pinMode(in1, OUTPUT);
+  pinMode(in2, OUTPUT);
+
+  pinMode(enB, OUTPUT);
+  pinMode(in3, OUTPUT);
+  pinMode(in4, OUTPUT);
+
+  Serial.begin(9600);
+}
+
+void loop() {
+  int yVal = analogRead(Y_pin);  // 0–1023
+
+  Serial.println(yVal);
+
+  // ===== FORWARD =====
+  if (yVal > (512 + deadzone)) {
+    int speedVal = map(yVal, 512 + deadzone, 1023, 0, 255);
+
+    // both motors forward
+    digitalWrite(in1, HIGH);
+    digitalWrite(in2, LOW);
+
+    digitalWrite(in3, HIGH);
+    digitalWrite(in4, LOW);
+
+    analogWrite(enA, speedVal);
+    analogWrite(enB, speedVal);
+  }
+
+  // ===== BACKWARD =====
+  else if (yVal < (512 - deadzone)) {
+    int speedVal = map(yVal, 0, 512 - deadzone, 255, 0);
+
+    // both motors reverse
+    digitalWrite(in1, LOW);
+    digitalWrite(in2, HIGH);
+
+    digitalWrite(in3, LOW);
+    digitalWrite(in4, HIGH);
+
+    analogWrite(enA, speedVal);
+    analogWrite(enB, speedVal);
+  }
+
+  // ===== STOP =====
+  else {
+    analogWrite(enA, 0);
+    analogWrite(enB, 0);
+  }
+
+  delay(50);
+}

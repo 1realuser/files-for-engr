@@ -1,0 +1,35 @@
+#include <Arduino.h>
+
+#include <SoftwareSerial.h>
+#include <TinyGPS++.h>
+
+// GPS object
+TinyGPSPlus gps;
+
+// RX, TX (Arduino pins)
+// GPS TX -> D3  (recommended stable pins)
+// GPS RX -> D2  (optional)
+SoftwareSerial gpsSerial(3, 2);
+
+void setup() {
+  Serial.begin(9600);
+  gpsSerial.begin(9600);
+}
+
+void loop() {
+  while (gpsSerial.available()) {
+    gps.encode(gpsSerial.read());
+  }
+
+  // Always print (so you know it's working)
+  Serial.print("Lat: ");
+  Serial.print(gps.location.lat(), 6);
+
+  Serial.print("  Lon: ");
+  Serial.print(gps.location.lng(), 6);
+
+  Serial.print("  Sats: ");
+  Serial.println(gps.satellites.value());
+
+  delay(1000); // slow down spam
+}
