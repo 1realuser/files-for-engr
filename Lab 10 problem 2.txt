@@ -1,0 +1,37 @@
+#include <Arduino.h>
+#include <LiquidCrystal.h>
+
+//Initialize LCD (same pins as lab)
+LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
+
+void setup() {
+  lcd.begin(16, 2);
+  lcd.print("Button:");
+}
+
+void loop() {
+  int value = analogRead(A0);
+
+  lcd.setCursor(0,1);
+
+  if (value < 50) {
+    lcd.print("RIGHT   ");
+  }
+  else if (value < 200) {
+    lcd.print("UP      ");
+  }
+  else if (value < 400) {
+    lcd.print("DOWN    ");
+  }
+  else if (value < 600) {
+    lcd.print("LEFT    ");
+  }
+  else if (value < 800) {
+    lcd.print("SELECT  ");
+  }
+  else {
+    lcd.print("NONE    ");
+  }
+
+  delay(200);
+}
