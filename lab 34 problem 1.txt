@@ -1,0 +1,80 @@
+#include <Arduino.h>
+#include <Wire.h>
+#include "SparkFunBME280.h"
+#include "RTClib.h"
+
+BME280 mySensor;
+RTC_DS1307 rtc;
+
+void setup()
+{
+    Serial.begin(9600);
+
+    Wire.begin();
+    Wire.setClock(400000);
+
+    // BME280 setup
+    mySensor.setI2CAddress(0x77);
+
+    if (mySensor.beginI2C() == false)
+    {
+        Serial.println("BME280 not detected");
+        while (1);
+    }
+
+    // RTC setup
+    if (!rtc.begin())
+    {
+        Serial.println("RTC not detected");
+        while (1);
+    }
+
+    // Uncomment ONCE to set RTC time
+    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+
+    Serial.println("System Ready");
+}
+
+void loop()
+{
+    DateTime now = rtc.now();
+
+    Serial.print(now.month());
+    Serial.print("/");
+    Serial.print(now.day());
+    Serial.print("/");
+    Serial.print(now.year());
+
+    Serial.print(" ");
+
+    Serial.print(now.hour());
+    Serial.print(":");
+
+    Serial.print(now.minute());
+    Serial.print(":");
+
+    Serial.print(now.second());
+
+    Serial.print(" | Temp: ");
+    Serial.print(mySensor.readTempF(), 2);
+
+    Serial.print(" F");
+
+    Serial.print(" | Pressure: ");
+    Serial.print(mySensor.readFloatPressure(), 0);
+
+    Serial.print(" Pa");
+
+    float humidity = mySensor.readFloatHumidity();
+
+    if (humidity > 0)
+    {
+        Serial.print(" | Humidity: ");
+        Serial.print(humidity, 1);
+        Serial.print("%");
+    }
+
+    Serial.println();
+
+    delay(1000);
+}
